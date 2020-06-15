@@ -45,7 +45,7 @@ def checar(frase):
 
 @app.route('/checagem/<frase>', methods=['GET', 'POST'])
 def login(frase):
-	if request.method == 'POST':
+	if request.method == 'GET':
 		return checar(escape(frase))
 	else:
 		return "Não encontrado"
