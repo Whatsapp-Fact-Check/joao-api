@@ -9,8 +9,7 @@
 from flask import Flask
 from markupsafe import escape
 from flask import request
-from flask import jsonify
-from flask_sqlalchemy import SQLAlchemy 
+from flask import jsonify 
 
 
 import pandas as pd 
