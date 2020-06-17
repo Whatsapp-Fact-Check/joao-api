@@ -8,8 +8,8 @@ from api_banco import pegar_noticias
 
 # Cada notícia é convertida em dois vetores de características usando dois tipo de embeddings, fastText e Flair.
 # Os vetores convertidos pelo FastText possuem 300 entradas cada um, já os convertidos pelo Flair possuem 4095 entradas
-# Esses vetores foram salvos em um arquivo CSV para evitar que se tenha que converte-los sempre que o código iniciar
-# Essa parte do código faz a recuperação desses vetores na pasta "static".
+# Esses vetores foram salvos no banco de dados para evitar que se tenha que converte-los sempre que o código iniciar
+# Essa parte do código faz a recuperação desses vetores no banco.
 
 # Quando importados, os vetores vem como uma string, essa função converte a string em um vetor de floats
 def converte_float(vetor):
