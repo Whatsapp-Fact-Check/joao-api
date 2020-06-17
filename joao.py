@@ -10,8 +10,6 @@ from flask import Flask
 from markupsafe import escape
 from flask import request
 from flask import jsonify
-from flask_sqlalchemy import SQLAlchemy 
-
 
 import pandas as pd 
 import os
@@ -30,6 +28,7 @@ app = Flask(__name__)
 
 
 def checar(frase):
+
 	respostas = gerar_respostas(frase)
 	lista = []
 	if (respostas):
@@ -43,9 +42,11 @@ def checar(frase):
 	return jsonify(lista)
 
 
-@app.route('/checagem/<frase>', methods=['GET', 'POST'])
-def login(frase):
+@app.route('/checagem', methods=['GET', 'POST'])
+def login():
 	if request.method == 'POST':
-		return checar(escape(frase))
+		frase = request.get_json() 
+	
+		return checar(frase["text"])
 	else:
 		return "Não encontrado"

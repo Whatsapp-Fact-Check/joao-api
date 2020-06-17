@@ -9,70 +9,20 @@ from flair.embeddings import StackedEmbeddings
 from flair.data import Sentence
 
 import numpy as np 
-from api_banco import pegar_noticias
 
-# ********************** Recuperação das notícias já convertidas em vetores ******************************
+from dicionario_embed import dicionario_embed
+from embed import define_embed
 
-# Cada notícia é convertida em dois vetores de características usando dois tipo de embeddings, fastText e Flair.
-# Os vetores convertidos pelo FastText possuem 300 entradas cada um, já os convertidos pelo Flair possuem 4095 entradas
-# Esses vetores foram salvos em um arquivo CSV para evitar que se tenha que converte-los sempre que o código iniciar
-# Essa parte do código faz a recuperação desses vetores na pasta "static".
+# Dicionario em com as noticias convertidas para vetores
+# O dicionário esta na forma:
+#         {"fastT" : fastT, "flair" : flair}, sendo fastT/flair a lista com os vetores das noticias calculadas pelo FastText/Flair
 
-# Quando importados, os vetores vem como uma string, essa função converte a string em um vetor de floats
-def converte_float(vetor):
-	v = vetor[1:][:-1].split(",")
-	lista = []
-	for i in range(0,len(v)):
-		lista.append(float(v[i]))
-	return lista
-
-
-db = pegar_noticias()
-df = pd.DataFrame(db)
-''' O DataFrame possui 6 colunas: 0 -> Texto da Notícia
-                                  1 -> Link da Notícia
-                                  2 -> Data da Checagem
-                                  3 -> Agencia que realizou a checagem
-                                  4 -> vetores do embedding FasText
-                                  5 -> Vetores do embedding Flair
-'''
-df[4] = df[4].apply(converte_float) # Vetores fast convertidos de String para Float
-df[5] = df[5].apply(converte_float) # Vetores flair convertidos de String para Float
-
-vetores_flair = df.drop(columns = [1,2,3,4]) # Deixando somente a coluna com a noticia e a coluna dos vetores Flair
-vetores_fast = df.drop(columns = [1,2,3,5]) # Deixando somente a coluna com a noticia e a coluna dos vetores Fast
-
-#vetores_flair = pd.read_csv(os.path.abspath("static/vetor_flair.csv")).drop(columns = "Unnamed: 0")
-#vetores_fast = pd.read_csv(os.path.abspath("static/vetor_fastT.csv")).drop(columns = "Unnamed: 0")
-#vetores_flair['1'] = vetores_flair['1'].apply(converte_float)
-#vetores_fast['1'] = vetores_fast['1'].apply(converte_float)
-
-# Convertendo os vetores que estão na forma de DataFrame para lista. Essa conversão facilita na iteração posterior
-flair = vetores_flair.values.tolist()
-fastT = vetores_fast.values.tolist()
-
-dicio_vetores = {"fastT" : fastT, "flair" : flair}
+dicio_vetores = dicionario_embed()
 
 # **************************** Definição dos Embeddings ********************************************
+# A função define_emdeb, retorna um dicionário na forma: {"fastT": document_embedding, "flair":document_embedding_flair}
 
-# Aqui é inicializado o embeddings do FastText em português
-# A opreação seguinte define o embedding para documentos, usando o método Pool para agregar cada embeddings das palavras
-pt_embedding = WordEmbeddings('pt')
-document_embedding = DocumentPoolEmbeddings([pt_embedding])
-
-# Inicializando os embeddings do Flair
-flair_embedding_forward = FlairEmbeddings('pt-forward')
-flair_embedding_backward = FlairEmbeddings('pt-backward')
-
-# Para o Flair é recomendado inicializar dois tipos de embeddings, forward e backward, e empilha-los usando StackedEmbeddings
-stacked_embeddings = StackedEmbeddings([
-										flair_embedding_forward,
-										flair_embedding_backward,
-									   ])
-
-document_embedding_flair = DocumentPoolEmbeddings([stacked_embeddings])
-
-embeddings = {"fastT": document_embedding, "flair":document_embedding_flair}
+embeddings = define_embed() 
 
 # ************** Cálculo de similaridade entre as notícias *********************************
 

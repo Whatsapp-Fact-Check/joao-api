@@ -1,6 +1,5 @@
 import psycopg2
 from psycopg2 import Error
-from decouple import config
 
 # *************** Parametros para conexão no Banco de Dados ****************
 usuario = config('USUARIO')
