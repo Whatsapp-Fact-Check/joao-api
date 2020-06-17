@@ -35,7 +35,7 @@ def checar(frase):
 		for resp in respostas:
 			ind = df[df['noticia'] == resp[1]]['data'].index #Gambiarra pra printar direito
 			dicio = {'Checado' : resp[1], 'Data' :  df['data'].loc[[i for i in ind][0]],
-					'Checado por' : df['checagem'].loc[[i for i in ind][0]],
+					'Checado_por' : df['checagem'].loc[[i for i in ind][0]],
 					'Link' : df['link'].loc[[i for i in ind][0]]}
 			lista.append(dicio)
 		
