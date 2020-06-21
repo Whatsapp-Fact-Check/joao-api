@@ -2,16 +2,10 @@
 import pandas as pd 
 import os
 
-from flair.embeddings import DocumentPoolEmbeddings
-from flair.embeddings import WordEmbeddings
-from flair.embeddings import FlairEmbeddings
-from flair.embeddings import StackedEmbeddings
-from flair.data import Sentence
-
 import numpy as np 
 
 from dicionario_embed import dicionario_embed
-from embed import define_embed
+from embed import calcula_embed
 
 # Dicionario em com as noticias convertidas para vetores
 # O dicionário esta na forma:
@@ -19,10 +13,6 @@ from embed import define_embed
 
 dicio_vetores = dicionario_embed()
 
-# **************************** Definição dos Embeddings ********************************************
-# A função define_emdeb, retorna um dicionário na forma: {"fastT": document_embedding, "flair":document_embedding_flair}
-
-embeddings = define_embed() 
 
 # ************** Cálculo de similaridade entre as notícias *********************************
 
@@ -34,18 +24,21 @@ embeddings = define_embed()
 # e são retornados as 10 noticias com maior similaridade
 #	3) Serão selecionadas como retorno da API aquelas noticias que estiverem presente em ambas as listas de 10 mais similares
   
-def arcos(vet1, vet2):
-	vetor_np1 = vet1.detach().numpy()
-	vetor_np2 = vet2
-	simi = (np.dot(vetor_np1,vetor_np2)) / (np.linalg.norm(vetor_np1) * np.linalg.norm(vetor_np2))
-	return np.arccos(simi)
+def arcos(vet1, vet2):   
+    vetor_np1 = vet1.detach().numpy()
+    
+    try:
+        vetor_np2 = vet2.detach().numpy()
+    except:
+        vetor_np2 = vet2
+    
+    simi = (np.dot(vetor_np1,vetor_np2)) / (np.linalg.norm(vetor_np1) * np.linalg.norm(vetor_np2))
+    return np.arccos(simi)
+
 
 def similaridade(frase, tipo_embeding):
 
-	sentence = Sentence(frase, use_tokenizer=True)
-	embeddings[tipo_embeding].embed(sentence)
-
-	vetor_frase = sentence.get_embedding()
+	vetor_frase = calcula_embed(frase, tipo_embeding)
 
 	lista_similaridade = []
 	for i in dicio_vetores[tipo_embeding]: # Primeira posição do vetor é a frase e a segunda o vetor de embedings

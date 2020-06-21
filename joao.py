@@ -16,6 +16,8 @@ import os
 
 from api import gerar_respostas
 from api_banco import pegar_noticias
+from palavras_chave import compara_keywords
+from processamento_texto import processamento
 
 
 noticias = pegar_noticias()
@@ -28,18 +30,24 @@ app = Flask(__name__)
 
 
 def checar(frase):
+	if (frase != ''):
+		respostas = gerar_respostas(frase.lower())
+		lista = []
+		if (respostas):
+			for resp in respostas:
+				limite = compara_keywords(frase,processamento(resp[1]))
 
-	respostas = gerar_respostas(frase)
-	lista = []
-	if (respostas):
-		for resp in respostas:
-			ind = df[df['noticia'] == resp[1]]['data'].index #Gambiarra pra printar direito
-			dicio = {'Checado' : resp[1], 'Data' :  df['data'].loc[[i for i in ind][0]],
-					'Checado_por' : df['checagem'].loc[[i for i in ind][0]],
-					'Link' : df['link'].loc[[i for i in ind][0]]}
-			lista.append(dicio)
-		
-	return jsonify(lista)
+				if (limite < 1.1): # 1.1 foi considerado um limite razoáveel pra dizer que duas frases são parecidas
+
+					ind = df[df['noticia'] == resp[1]]['data'].index #Gambiarra pra printar direito
+					dicio = {'Checado' : resp[1], 'Data' :  df['data'].loc[[i for i in ind][0]],
+							'Checado_por' : df['checagem'].loc[[i for i in ind][0]],
+							'Link' : df['link'].loc[[i for i in ind][0]]}
+					lista.append(dicio)
+			
+		return jsonify(lista)
+	else:
+		return jsonify([])
 
 
 @app.route('/checagem', methods=['GET', 'POST'])

@@ -7,6 +7,7 @@ from flair.data import Sentence
 
 
 # **************************** Definição dos Embeddings ********************************************
+
 def define_embed():
 	# Aqui é inicializado o embeddings do FastText em português
 	# A opreação seguinte define o embedding para documentos, usando o método Pool para agregar cada embeddings das palavras
@@ -28,3 +29,18 @@ def define_embed():
 	embeddings = {"fastT": document_embedding, "flair":document_embedding_flair}
 
 	return embeddings
+
+
+# A função define_emdeb, retorna um dicionário na forma: {"fastT": document_embedding, "flair":document_embedding_flair}
+embeddings = define_embed() 
+
+# **************************** Calcular vetores ********************************************
+
+# A função calcula os vetores para a frase passada como parametro
+
+def calcula_embed(frase,tipo_embeding):
+	sentence = Sentence(frase, use_tokenizer=True)
+	embeddings[tipo_embeding].embed(sentence)
+	vetor_frase = sentence.get_embedding()
+
+	return vetor_frase
