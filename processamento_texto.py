@@ -1,5 +1,9 @@
 # ******************* Imports *********************
 import string
+import unidecode
+import spacy
+# python -m spacy download pt_core_news_sm
+nlp = spacy.load('pt_core_news_sm')
 
 
 # Realiza um pré-processamento dos textos
@@ -16,15 +20,22 @@ def processamento(noticia):
         s = s.replace(i,'')
 
     
-    palavras = s.lower().split() 
-    
-    #significativas = [w for w in palavras if not w in stopwords]
-    
-    #frase = ' '.join(significativas)
+    palavras = s.lower().split()
     
     frase = ' '.join(palavras)
     
     for term in termos:
         frase = frase.replace(term, '')
+
+    doc = nlp(frase)
+    sem_acento = []
+    for token in doc:
+        if (token.pos_ == 'NOUN') or (token.pos_ == 'PROPN') or (token.pos_ == 'ADJ'):
+            unaccented_string = unidecode.unidecode(str(token))
+            sem_acento.append(unaccented_string)
+        else:
+            sem_acento.append(str(token))
+
+    frase = ' '.join(sem_acento)
     
     return frase
