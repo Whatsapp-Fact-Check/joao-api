@@ -31,11 +31,12 @@ app = Flask(__name__)
 
 def checar(frase):
 	if (frase != ''):
-		respostas = gerar_respostas(frase.lower())
+		frase_processada = processamento(frase)
+		respostas = gerar_respostas(frase_processada)
 		lista = []
 		if (respostas):
 			for resp in respostas:
-				limite = compara_keywords(frase,processamento(resp[1]))
+				limite = compara_keywords(frase_processada,processamento(resp[1]))
 
 				if (limite < 1.1): # 1.1 foi considerado um limite razoáveel pra dizer que duas frases são parecidas
 
