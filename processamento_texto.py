@@ -1,6 +1,6 @@
 # ******************* Imports *********************
 import string
-import unidecode
+#import unidecode
 import spacy
 # python -m spacy download pt_core_news_sm
 nlp = spacy.load('pt_core_news_sm')
@@ -27,6 +27,8 @@ def processamento(noticia):
     for term in termos:
         frase = frase.replace(term, '')
 
+    return frase
+"""
     doc = nlp(frase)
     sem_acento = []
     for token in doc:
@@ -37,5 +39,4 @@ def processamento(noticia):
             sem_acento.append(str(token))
 
     frase = ' '.join(sem_acento)
-    
-    return frase
+ """   
